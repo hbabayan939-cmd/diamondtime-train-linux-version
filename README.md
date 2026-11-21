@@ -63,10 +63,11 @@ You need Python 3.12–3.14, Node.js 22 or newer, npm, and Git. After installing
 ```sh
 chmod +x lasttrain.sh
 ./lasttrain.sh install
+./lasttrain.sh desktop-install
 ./lasttrain.sh start
 ```
 
-Installation downloads Python and JavaScript dependencies and builds the browser interface, so it needs internet access. Starting the app later does not. The app opens at a local address in your web browser. Stop the background server with:
+Installation downloads Python and JavaScript dependencies and builds the browser interface, so it needs internet access. `desktop-install` adds a Last Train icon to your applications menu. After that, launch it with one click; the app opens at a local address in your web browser. Starting the app later does not need internet access. Stop the background server with:
 
 ```sh
 ./lasttrain.sh stop
@@ -78,8 +79,10 @@ The same script provides additional commands:
 ./lasttrain.sh backup
 ./lasttrain.sh restore
 ./lasttrain.sh doctor
-./lasttrain.sh --help
+./lasttrain.sh desktop-remove
 ```
+
+`desktop-remove` removes the menu shortcut only. It keeps the project and your profile. If you move the project folder, run `./lasttrain.sh desktop-install` again so the shortcut points to its new location.
 
 ## Optional Linux package build
 
