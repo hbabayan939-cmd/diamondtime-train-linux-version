@@ -1,100 +1,127 @@
 <div align="center">
 
-# LAST TRAIN
+# LAST TRAIN — LINUX FORK
 
 ### A quieter way to make time feel like a journey.
 
 **In the end… it matters how far the train has traveled.**
 
-<br>
+This is a Linux-only fork of [Last Train](https://github.com/count-rzy/diamondtime-train), an offline-first focus and reflection app created by **COUNT (count-rzy)**.
 
-[![Experimental pre-release](https://img.shields.io/badge/release-v1.0.0--exp.1-c88f52?style=flat-square)](https://github.com/count-rzy/diamondtime-train/releases/tag/v1.0.0-exp.1)
-![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-263a55?style=flat-square)
+[![Linux](https://img.shields.io/badge/platform-Linux-355a4d?style=flat-square)](#linux-installation)
 ![Local first](https://img.shields.io/badge/data-local--first-355a4d?style=flat-square)
 ![React](https://img.shields.io/badge/interface-React-263a55?style=flat-square)
 
 <br>
 
-**[Download for Windows](https://github.com/count-rzy/diamondtime-train/releases/tag/v1.0.0-exp.1)** &nbsp; · &nbsp; [What’s included](#the-journey) &nbsp; · &nbsp; [Screenshots](#a-look-inside) &nbsp; · &nbsp; [Development](#for-developers)
-
-<br>
+[Install on Linux](#linux-installation) · [What the project does](#what-is-last-train) · [Credits](#credits)
 
 </div>
 
-> **Experimental pre-release.** Last Train v1.0 EXP is an early release and some workflows may still have bugs. Create a backup before major updates. In-app backup restoration is not yet supported.
+## What is Last Train?
 
-## The journey
+Last Train turns focused work into a railway journey. Choose a route and duration, and the train moves while you work. Planned breaks become station stops, and finishing a session brings the train to its destination. A pixel-art carriage and changing scenery make time visible, while a diary gives you a place to keep notes about the journey.
 
-Last Train gives focused time a sense of place. Choose a route and a duration; work moves the train forward, planned breaks become station stops, and the timer ends with an arrival. A warm-lit pixel-art carriage and changing landscapes make the passing minutes visible, while your diary keeps the moments worth remembering.
-
-It is a small local companion for work, rest and reflection — one quiet mile at a time.
+The app is designed for personal use on one computer. Its web interface is served locally and its profile is stored on your computer. It does not need a cloud account or an internet connection after installation.
 
 ## A look inside
 
 <div align="center">
 
-<img src="docs/media/readme/carriage.png" alt="The Last Train carriage with a journey timer and railway scenery" width="100%">
+<img src="docs/media/readme/carriage.png" alt="Last Train's carriage, journey timer and railway scenery" width="100%">
 
 *The carriage: set out, watch the landscape change, and arrive when your session is complete.*
 
-<br>
-
 <table>
 <tr>
-<td width="50%" align="center"><img src="docs/media/readme/railway-atlas.png" alt="Interactive Railway Atlas showing the current train route" width="100%"><br><sub>Follow the route in the Railway Atlas</sub></td>
-<td width="50%" align="center"><img src="docs/media/readme/diary.png" alt="Travel diary notebook for writing and searching notes" width="100%"><br><sub>Keep a travel diary along the way</sub></td>
+<td width="50%" align="center"><img src="docs/media/readme/railway-atlas.png" alt="Interactive Railway Atlas" width="100%"><br><sub>Follow the route in the Railway Atlas</sub></td>
+<td width="50%" align="center"><img src="docs/media/readme/diary.png" alt="Travel diary" width="100%"><br><sub>Keep a travel diary</sub></td>
 </tr>
 <tr>
-<td colspan="2" align="center"><br><img src="docs/media/readme/radio.png" alt="Cabin radio with playlist, playback and volume controls" width="72%"><br><sub>Settle in with the cabin radio and train ambience</sub></td>
+<td colspan="2" align="center"><br><img src="docs/media/readme/radio.png" alt="Cabin radio and audio controls" width="72%"><br><sub>Settle in with the cabin radio and train ambience</sub></td>
 </tr>
 </table>
 
 </div>
 
-## Along the way
+## What you can do
 
-| **Journeys** | **A living railway** |
-|:--|:--|
-| Set a focus duration, add planned rest stops, and follow progress to arrival. Review completed trips in journey history. | An illustrated carriage frames changing scenery, station events and an interactive Railway Atlas that follows your route. |
-| **Diary & statistics** | **Sound & atmosphere** |
-| Write and search diary entries beside your journeys. See your accumulated time and trip history in statistics. | Play the built-in radio, add supported local audio, and tune the independently controlled train ambience. |
-| **Your preferences** | **Your local profile** |
-| Use Russian or English, and adjust display, motion, weather and sound preferences. | Journeys, notes, settings and imported audio stay in the local profile. Create a ZIP backup or export journeys and diary from Settings. |
+- Plan focus sessions with rest stops and review completed journeys.
+- Watch the carriage, railway scenery, weather and station events change as a journey progresses.
+- Explore the Railway Atlas and view journey statistics.
+- Write and search diary entries.
+- Listen to the built-in radio, import supported local audio, and adjust generated train ambience.
+- Choose English or Russian and adjust display, motion, weather and sound preferences.
+- Create a backup ZIP or export journey and diary data from Settings.
 
-## Windows portable edition
+## Linux installation
 
-The experimental download is a Windows x64 portable ZIP. **Python, Node.js and VS Code are not needed** to use it.
+This fork is intended for Linux computers. It currently runs from the project source through the included `lasttrain.sh` script; it is not a prebuilt desktop package. Follow the full [Linux installation and usage guide](docs/LINUX-INSTALLATION.md).
 
-1. [Download the Windows ZIP](https://github.com/count-rzy/diamondtime-train/releases/tag/v1.0.0-exp.1) from the experimental release.
-2. Extract the entire archive to a writable folder; keep the EXE files, `_internal` folder and other packaged files together.
-3. Double-click **Start Last Train.exe**. The application opens in your browser and runs locally on your computer.
-4. When you are finished, double-click **Stop Last Train.exe**. Closing the browser tab alone may leave the local server running.
+You need Python 3.12–3.14, Node.js 22 or newer, npm, and Git. After installing those prerequisites and cloning this repository, run these commands from the project directory:
 
-Your portable profile lives under `%LOCALAPPDATA%\LastTrain`, outside the program files, so replacing the application folder preserves it. Make a backup before major updates and keep important copies somewhere safe. **Restoring a backup from Settings is not supported yet.** The existing `restore.bat` belongs to the source project and is not included in the portable ZIP; see [portable data notes](docs/PORTABLE-WINDOWS.md) before migrating source data.
+```sh
+chmod +x lasttrain.sh
+./lasttrain.sh install
+./lasttrain.sh start
+```
+
+Installation downloads Python and JavaScript dependencies and builds the browser interface, so it needs internet access. Starting the app later does not. The app opens at a local address in your web browser. Stop the background server with:
+
+```sh
+./lasttrain.sh stop
+```
+
+The same script provides additional commands:
+
+```sh
+./lasttrain.sh backup
+./lasttrain.sh restore
+./lasttrain.sh doctor
+./lasttrain.sh --help
+```
+
+## Optional Linux package build
+
+To create an onedir archive for Linux x86_64, install the project requirements and build tools, then run:
+
+```sh
+./packaging/build.sh
+```
+
+The archive is written to `dist/LastTrain-Linux-x86_64.zip`. It includes the Python runtime and app dependencies, so the target computer does not need Node.js or Python. A browser and compatible Linux system libraries are still required. See [packaging/README.txt](packaging/README.txt) for archive usage and compatibility notes. The source install through `lasttrain.sh` remains the recommended development and setup path.
+
+## Your data
+
+By default, the SQLite database, backups and imported audio are stored in the project’s `data/` directory. Keep that directory safe and include it in your own backup routine. To store the profile elsewhere, set `LASTTRAIN_DATA_DIR` to the same absolute path whenever you use `lasttrain.sh`, for example:
+
+```sh
+LASTTRAIN_DATA_DIR="$HOME/.local/share/lasttrain" ./lasttrain.sh install
+LASTTRAIN_DATA_DIR="$HOME/.local/share/lasttrain" ./lasttrain.sh start
+```
+
+The application binds to `127.0.0.1`, so it is intended to be used from the same computer. Closing the browser tab does not stop the local server; run `./lasttrain.sh stop` when you are finished.
+
+## Project documentation
+
+- [Linux installation, operation and troubleshooting](docs/LINUX-INSTALLATION.md)
+- [Architecture, local data and development checks](docs/LOCAL-EDITION.md)
+- [Project history and changes](CHANGELOG.md)
+- [Credits and project lineage](docs/PROJECT-CREDITS.md)
+- [Linux source-edition notes](docs/releases/linux-source-edition.md)
+- [Pixel-art direction and asset workflow](front/art/ART_DIRECTION.md)
 
 ## Technology
 
-<div align="center">
-
-`React` &nbsp; · &nbsp; `Vite` &nbsp; · &nbsp; `JavaScript` &nbsp; · &nbsp; `Django` &nbsp; · &nbsp; `Django REST Framework` &nbsp; · &nbsp; `Waitress` &nbsp; · &nbsp; `SQLite` &nbsp; · &nbsp; `PyInstaller`
-
-</div>
-
-The browser interface is built with React and Vite. A local Django API and Waitress server handle application requests; SQLite stores the profile. The Windows portable edition packages the runtime with PyInstaller.
-
-## For developers
-
-On Windows, install Python 3.12–3.14 and Node.js 22 or 24 LTS. From the repository root, run `setup.bat` to install dependencies and build the frontend, then `start.bat` to run the local app; use `stop.bat` to stop it. Initial dependency setup needs internet access. Normal local use does not.
-
-See [portable build and data notes](docs/PORTABLE-WINDOWS.md), [local edition engineering notes](docs/LOCAL-EDITION.md), and the [development changelog](CHANGELOG.md).
+The interface uses React, JavaScript and Vite. The local API and server use Django, Django REST Framework and Waitress. SQLite stores the profile. The Vite build bundles the interface, artwork and fonts for local serving.
 
 ## Credits
 
-**Created by COUnT (count-rzy).**
+Last Train was created by **COUNT (count-rzy)**. This Linux fork builds on the original project and preserves its design, features and history.
 
-**Special thanks to Sonya (Ryuko)** — for her contributions, guidance, patience, and for helping me grow as a developer. Some journeys begin long before the train leaves the station.
+**Special thanks to Sonya (Ryuko)** for her contributions, guidance and programming mentorship, and for supporting the creator’s growth as a developer.
 
-The stable v1.0 documentation will include a longer acknowledgement, as recorded in the [stable documentation plan](docs/STABLE-1.0-DOCUMENTATION-TODO.md).
+See [project credits and lineage](docs/PROJECT-CREDITS.md) and the [original repository](https://github.com/count-rzy/diamondtime-train).
 
 <div align="center">
 

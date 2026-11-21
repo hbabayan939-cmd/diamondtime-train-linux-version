@@ -1,49 +1,39 @@
 # Changelog
 
-This changelog follows the project's documented development milestones. The v0.1, v0.2 and v0.3 headings are organizational summaries, not claims about exact tagged releases or dates. Newest milestone first.
+This file records the Linux fork's platform direction alongside history inherited from the original Last Train project. Historical upstream milestones are not Linux fork releases. See the [Linux installation guide](docs/LINUX-INSTALLATION.md) for supported use of this fork.
 
-## v1.0.0-exp.1 — Last Train v1.0 EXP
+## Linux fork — source edition
 
-### Added
+- Set the fork's target platform to Linux.
+- Added `lasttrain.sh` as the single Linux command entry point for installation, start, stop, backup, restore and diagnostics.
+- Added an optional Linux x86_64 PyInstaller onedir build and ZIP packager.
+- Added Linux setup and usage documentation, and documented the original project lineage and contributor credits.
+- Added Linux process locking and launcher startup support while retaining the original application architecture.
 
-- Experimental Windows x64 portable distribution using a PyInstaller onedir bundle.
-- Settings actions for creating a full backup and exporting journeys and diary entries.
+## Upstream history
 
-### Improved
+### v0.1.0-exp.1 — Last Train v0.1 EXP
 
-- Portable startup, shutdown and instance handoff, including graceful Waitress shutdown that drains active connections.
-- Recovery of the compartment layout after exiting fullscreen.
-- Documentation for portable storage, backup-first source migration and the Windows package.
+The original project published its first experimental packaged edition.
 
-## v0.3 — Interface and Windows portable stabilization
+- Added Settings actions for full profile backups and journey/diary exports.
+- Improved portable startup, shutdown and instance handoff, including graceful Waitress shutdown that drains active connections.
+- Improved compartment layout recovery after leaving fullscreen.
+- Documented portable storage, backup-first migration and the original packaged edition.
 
-### Added
+### v0.3 — Interface and packaged edition stabilization
 
-- A Windows onedir packaging workflow and portable launch/stop support.
-- Portable storage and backup-first migration guidance.
+- Added an onedir packaging workflow and portable launch/stop support to the original project.
+- Improved compartment and scenery presentation, fullscreen recovery, production favicon serving and portable process reliability.
 
-### Improved
+### v0.2 — Feature expansion and railway experience
 
-- Compartment and scenery presentation, with the atlas and radio kept inside the carriage.
-- Fullscreen layout recovery, production favicon serving and portable lifecycle reliability.
+- Added scheduled station breaks, persistent railway routes and an interactive Railway Atlas.
+- Added the animated railway scene, scenery events, an immersive carriage and in-scene notebook.
+- Improved journey transitions, audio activation, train ambience, diary search and browser lifecycle behavior.
 
-## v0.2 — Feature expansion and railway experience
+### v0.1 — Initial foundation
 
-### Added
-
-- Scheduled station breaks, persistent railway routes and an interactive Railway Atlas.
-- A living railway scene with synchronized landscapes, events and depot arrival.
-- An immersive carriage and in-scene notebook.
-
-### Improved
-
-- Journey transitions, audio activation and train ambience playback.
-- Diary search and browser lifecycle behavior for the railway scene.
-
-## v0.1 — Initial foundation
-
-### Added
-
-- The initial offline local edition with a Django API, React/Vite interface and SQLite data storage.
-- Russian and English interface support, journey and diary workflows, and local desktop setup.
-- Locally generated train ambience and verification for setup and sustained audio behavior.
+- Established the offline local application with a Django API, React/Vite interface and SQLite storage.
+- Added Russian and English interface support, journey and diary workflows, and local setup.
+- Added locally generated train ambience and checks for setup and sustained audio behavior.

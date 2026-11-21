@@ -63,7 +63,7 @@ describe('complete local dictionaries', () => {
     expect(
       apiError({ duration_minutes: ['Ensure this value is greater than or equal to 1.'] }),
     ).toContain('не меньше 1')
-    expect(translateMessage('Failed to fetch')).toContain('start.bat')
+    expect(translateMessage('Failed to fetch')).toContain('Last Train')
     expect(translateMessage('Мой поезд — Dawn 🚂')).toBe('Мой поезд — Dawn 🚂')
     expect([1, 2, 5, 21].map((count) => plural('count.journeys', count))).toEqual([
       '1 поездка',

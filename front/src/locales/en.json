@@ -19,7 +19,7 @@
   "ui.return_home": "Return home",
   "ui.preparing_the_platform": "Preparing the platform…",
   "ui.local_server_unavailable": "Local server unavailable:",
-  "ui.run_start_bat_then": ". Run start.bat, then",
+  "ui.start_last_train_then_retry": ". Start Last Train, then",
   "ui.retry": "Retry",
   "ui.train_compartment": "Train compartment",
   "ui.last_train_carriage_01": "LAST TRAIN / CARRIAGE 01",

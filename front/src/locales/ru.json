@@ -19,7 +19,7 @@
   "ui.return_home": "Вернуться в купе",
   "ui.preparing_the_platform": "Готовим платформу…",
   "ui.local_server_unavailable": "Локальный сервер недоступен:",
-  "ui.run_start_bat_then": ". Запустите start.bat, затем нажмите",
+  "ui.start_last_train_then_retry": ". Запустите Last Train, затем нажмите",
   "ui.retry": "Повторить",
   "ui.train_compartment": "Купе поезда",
   "ui.last_train_carriage_01": "LAST TRAIN / ВАГОН 01",

@@ -23,37 +23,38 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 @contextlib.contextmanager
 def lock(name):
-    import ctypes
-    from ctypes import wintypes
-    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
-    kernel.CreateMutexW.argtypes = (wintypes.LPVOID, wintypes.BOOL, wintypes.LPCWSTR)
-    kernel.CreateMutexW.restype = wintypes.HANDLE
-    kernel.WaitForSingleObject.argtypes = (wintypes.HANDLE, wintypes.DWORD)
-    kernel.WaitForSingleObject.restype = wintypes.DWORD
-    kernel.ReleaseMutex.argtypes = (wintypes.HANDLE,)
-    kernel.CloseHandle.argtypes = (wintypes.HANDLE,)
-    identity = hashlib.sha256(str(DATA).lower().encode("utf-8")).hexdigest()[:24]
-    handle = kernel.CreateMutexW(None, False, f"Local\\LastTrain-{identity}-{name}")
-    if not handle:
-        raise OSError(ctypes.get_last_error(), "Cannot create Last Train instance mutex")
-    acquired = False
-    try:
-        result = kernel.WaitForSingleObject(handle, 120000 if name == "launcher.lock" else 0)
-        if result not in (0, 0x80):
-            raise RuntimeError("Last Train is running or maintenance is in progress. Close the other instance first.")
-        acquired = True
-        yield
-    finally:
-        if acquired:
-            kernel.ReleaseMutex(handle)
-        kernel.CloseHandle(handle)
+    # flock locks are released by the OS if a process exits unexpectedly.
+    import fcntl
+    identity = hashlib.sha256(str(DATA).encode("utf-8")).hexdigest()[:24]
+    lock_path = DATA / f".{identity}-{name}"
+    with lock_path.open("a+") as handle:
+        operation = fcntl.LOCK_EX
+        if name != "launcher.lock":
+            operation |= fcntl.LOCK_NB
+        if name == "launcher.lock":
+            deadline = time.monotonic() + 120
+            while True:
+                try:
+                    fcntl.flock(handle, operation | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError:
+                    if time.monotonic() >= deadline:
+                        raise RuntimeError("Last Train is running or maintenance is in progress. Close the other instance first.")
+                    time.sleep(.1)
+        else:
+            try:
+                fcntl.flock(handle, operation)
+            except BlockingIOError as exc:
+                raise RuntimeError("Last Train is already running or maintenance is in progress.") from exc
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def build_identity():
     if getattr(sys, "frozen", False):
         executable = Path(sys.executable).resolve()
-        if executable.name.lower() == "stop last train.exe":
-            executable = executable.with_name("Start Last Train.exe")
         digest = hashlib.sha256(executable.read_bytes())
         frontend = ROOT / "front" / "dist"
         for asset in sorted(path for path in frontend.rglob("*") if path.is_file()):
@@ -73,8 +74,6 @@ def compatible_state(state):
         return False
     if getattr(sys, "frozen", False):
         executable = Path(sys.executable).resolve()
-        if executable.name.lower() == "stop last train.exe":
-            executable = executable.with_name("Start Last Train.exe")
         return Path(process.exe()).resolve() == executable
     return str(Path(__file__).resolve()) in process.cmdline()
 
@@ -127,20 +126,20 @@ def initialize():
 def validate():
     from local_data import integrity
     if not (DATA / "lasttrain.sqlite3").is_file():
-        raise RuntimeError("Database missing. Run setup.bat first.")
+        raise RuntimeError("Database missing. Initialize the profile with the install command for this edition.")
     integrity(DATA / "lasttrain.sqlite3")
     dist = ROOT / "front" / "dist"
     if not (dist / "index.html").is_file() or not list((dist / "assets").glob("*.js")):
-        raise RuntimeError("Frontend build missing. Run setup.bat.")
+        raise RuntimeError("Frontend build missing. Build the frontend with the install command for this edition.")
     required_art = "carriage carriage-detail architecture-lights distant-birds firefly-strip foreground-ground glass-rain glass lamp-light mid-pines near-pines panel-texture paper-texture rain-0 rain-1 rain-2 rain-3 rail-tunnel-v3 valley-afternoon valley-dawn valley-fog valley-morning valley-night valley-sunset valley-twilight water-shimmer window-mask".split()
     for name in required_art:
         if not (dist / "art" / (name + ".png")).is_file():
-            raise RuntimeError(f"Missing artwork: {name}. Run setup.bat.")
+            raise RuntimeError(f"Missing artwork: {name}. Build the frontend with the install command for this edition.")
     import re
     for reference in re.findall(r'(?:src|href)="(/assets/[^"]+)"', (dist / "index.html").read_text(encoding="utf-8")):
         asset = (dist / reference.lstrip("/")).resolve()
         if not asset.is_relative_to(dist.resolve()) or not asset.is_file():
-            raise RuntimeError("A referenced frontend bundle is missing. Run setup.bat.")
+            raise RuntimeError("A referenced frontend bundle is missing. Build the frontend with the install command for this edition.")
     django_ready()
     check_migration_compatibility()
     from django.core.management import call_command
@@ -153,7 +152,7 @@ def validate():
     finally:
         connections.close_all()
     if pending:
-        raise RuntimeError("Database migrations pending. Run setup.bat.")
+        raise RuntimeError("Database migrations pending. Run ./lasttrain.sh install.")
 
 
 def owned_process(state):
@@ -183,42 +182,6 @@ def unverified_live_process(state):
         return False
 
 
-def portable_owner(state):
-    """Recognize old packaged builds without requiring their files to exist."""
-    import psutil
-    process = owned_process(state)
-    if not process or not state.get("build"):
-        return None
-    try:
-        executable = Path(state["executable"])
-        if executable.name.lower() != "start last train.exe":
-            return None
-        if Path(process.exe()).name.lower() != executable.name.lower():
-            return None
-        if not all(arg in process.cmdline() for arg in ("_serve", state["instance"])):
-            return None
-        return process
-    except (OSError, KeyError, ValueError, psutil.Error):
-        return None
-
-
-def handoff(state):
-    """Called under launcher.lock, before any database access or migration."""
-    process = portable_owner(state)
-    if not process or not ready(state):
-        raise RuntimeError("Cannot verify the previous portable instance. It was left running; see startup.log.")
-    request_shutdown(state, process)
-    # Process exit alone does not prove the endpoint and ownership mutex are free.
-    with lock("server.lock"):
-        with socket.socket() as probe:
-            try:
-                probe.bind(("127.0.0.1", state["port"]))
-            except OSError as exc:
-                raise RuntimeError("The previous Last Train port is still occupied. The new version was not started.") from exc
-    if read_state() == state:
-        STATE.unlink(missing_ok=True)
-
-
 def read_state():
     try:
         return json.loads(STATE.read_text())
@@ -242,9 +205,9 @@ def start(no_browser=False):
         raise RuntimeError("This profile points to a living but unverified process. No new server was started.")
     if existing:
         if not compatible_state(state):
-            raise RuntimeError("Another Last Train build is running with this data profile. Close it using its own Stop Last Train.exe before starting this version.")
+            raise RuntimeError("Another Last Train build is running with this profile. Stop it using its matching launcher before starting this version.")
         if not ready(state):
-            raise RuntimeError("Owned server exists but is not ready. Inspect data/server.log or run stop.bat.")
+            raise RuntimeError("Owned server exists but is not ready. Inspect data/server.log or run ./lasttrain.sh stop.")
     else:
         validate()
         # Reserve a candidate; Waitress handles the final bind. Readiness verifies identity.
@@ -264,9 +227,8 @@ def start(no_browser=False):
         command = ([sys.executable] if getattr(sys, "frozen", False)
                    else [sys.executable, str(Path(__file__).resolve())])
         with (DATA / "server.log").open("a", encoding="utf-8") as log:
-            process = subprocess.Popen([*command, "_serve", "--port", str(port), "--instance", token],
-                cwd=ROOT, stdin=subprocess.DEVNULL, stdout=log, stderr=log,
-                creationflags=subprocess.CREATE_NO_WINDOW)
+            options = {"cwd": ROOT, "stdin": subprocess.DEVNULL, "stdout": log, "stderr": log}
+            process = subprocess.Popen([*command, "_serve", "--port", str(port), "--instance", token], **options)
         import psutil
         state = {"pid": process.pid, "created": psutil.Process(process.pid).create_time(), "port": port, "instance": token,
                  "executable": str(Path(sys.executable if getattr(sys, "frozen", False) else __file__).resolve()),
@@ -275,7 +237,7 @@ def start(no_browser=False):
         deadline = time.monotonic() + 30
         while not ready(state):
             if process.poll() is not None or time.monotonic() >= deadline:
-                raise RuntimeError("Server did not become ready. Read data/server.log; run stop.bat before retrying.")
+                raise RuntimeError("Server did not become ready. Read data/server.log; run ./lasttrain.sh stop before retrying.")
             time.sleep(.2)
     url = f'http://127.0.0.1:{state["port"]}/'
     print("Last Train ready:", url)
@@ -292,7 +254,7 @@ def stop():
     if not process and unverified_live_process(state):
         raise RuntimeError("The recorded process is alive but its identity cannot be verified. Nothing was stopped or removed.")
     if process and not compatible_state(state):
-        raise RuntimeError("This Stop Last Train belongs to a different build. Use the Stop EXE beside the running Start EXE.")
+        raise RuntimeError("This launcher belongs to a different build. Use that installation's launcher to stop it.")
     if process:
         request_shutdown(state, process)
         print("Stopped the owned Last Train server.")

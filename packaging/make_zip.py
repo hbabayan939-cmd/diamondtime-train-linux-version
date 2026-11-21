@@ -5,10 +5,10 @@ import zipfile
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
-folder = root / "dist" / "LastTrain-Windows-x64"
-target = root / "dist" / "LastTrain-v1.0.0-exp.1-Windows-x64.zip"
+folder = root / "dist" / "LastTrain-Linux-x86_64"
+target = root / "dist" / "LastTrain-Linux-x86_64.zip"
 temporary = target.with_suffix(".zip.tmp")
-if not (folder / "Start Last Train.exe").is_file() or not (folder / "_internal" / "front" / "dist" / "index.html").is_file():
+if not (folder / "LastTrain").is_file() or not (folder / "_internal" / "front" / "dist" / "index.html").is_file():
     sys.exit("Portable distribution is incomplete.")
 try:
     with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6,
