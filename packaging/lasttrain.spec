@@ -1,4 +1,4 @@
-# Build with: python -m PyInstaller --noconfirm packaging/lasttrain.spec
+# Linux onedir build: ./packaging/build.sh
 from pathlib import Path
 import sys
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
@@ -10,14 +10,14 @@ datas += collect_data_files("django")
 datas += collect_data_files("rest_framework")
 datas += collect_data_files("rest_framework_simplejwt",
                             includes=["token_blacklist/migrations/*.py"], include_py_files=True)
-hiddenimports = (collect_submodules("config") + collect_submodules("journeys")
+hiddenimports = (["launcher", "local_data"] + collect_submodules("config") + collect_submodules("journeys")
                  + collect_submodules("django.db.backends.sqlite3"))
 for app in ("django.contrib.auth", "django.contrib.contenttypes", "django.contrib.sessions",
             "rest_framework", "rest_framework_simplejwt.token_blacklist"):
     hiddenimports += collect_submodules(app, filter=lambda name: ".tests" not in name)
 
 a = Analysis(
-    [str(root / "portable.py")],
+    [str(root / "packaging" / "linux_launcher.py")],
     pathex=[str(root / "back")],
     binaries=[],
     datas=datas,
@@ -30,8 +30,8 @@ a = Analysis(
     noarchive=False,
 )
 pyz = PYZ(a.pure)
-exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="Start Last Train",
+exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="LastTrain",
           debug=False, bootloader_ignore_signals=False, strip=False, upx=False,
-          console=False, disable_windowed_traceback=False)
+          console=True, disable_windowed_traceback=False)
 coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False,
-               name="LastTrain-Windows-x64")
+               name="LastTrain-Linux-x86_64")

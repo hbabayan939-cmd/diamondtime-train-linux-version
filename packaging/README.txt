@@ -1,28 +1,40 @@
-LAST TRAIN v1.0 EXP - WINDOWS PORTABLE
+LAST TRAIN - LINUX x86_64 PORTABLE BUILD
 
-1. Extract the entire ZIP to a writable folder.
-2. Double-click "Start Last Train.exe". Wait for the browser to open.
-3. To stop the local server, double-click "Stop Last Train.exe".
+This archive contains the Last Train runtime for Linux x86_64.
 
-No Python, Node.js, setup, administrator access, or internet is needed to run.
-The browser must be installed separately. Last Train listens only on 127.0.0.1.
+1. Extract the complete archive to a folder you can access.
+2. Keep the LastTrain executable and _internal directory together.
+3. Open a terminal in the extracted LastTrain-Linux-x86_64 folder.
+4. Initialize the profile once: ./LastTrain init
+5. Start the app: ./LastTrain start
+6. Open the local URL printed by the command if your browser does not open.
+7. When finished, run: ./LastTrain stop
 
-Your data is stored in %LOCALAPPDATA%\LastTrain\data, outside this folder.
-Replacing the application folder does not replace the database. Backups are
-stored in %LOCALAPPDATA%\LastTrain\data\backups. Keep separate backup copies.
+The target computer does not need Python or Node.js. A web browser is required.
+The app listens only on 127.0.0.1. Closing the browser does not stop the server.
 
-UPGRADING FROM A SOURCE INSTALLATION WITH data\lasttrain.sqlite3
-Stop Last Train in the old installation first. Run its backup.bat, and keep
-that ZIP in a safe location. Before launching this portable edition, copy the
-entire old data folder (database plus user-files) to
-%LOCALAPPDATA%\LastTrain\data. Do this only if that destination has no
-existing lasttrain.sqlite3. Never overwrite an existing portable database.
-Keep the old data folder and backup ZIP until journeys and diary are checked.
-If a portable database already exists, use the in-app export and backup tools
-and resolve the two profiles separately; do not merge SQLite files by hand.
+User data is stored in XDG_DATA_HOME/LastTrain/data (by default,
+~/.local/share/LastTrain/data) and is kept separately from this program folder.
+It can also be relocated by setting
+LASTTRAIN_DATA_DIR to an absolute path before running the executable. Backups
+are created in the data/backups directory. Keep additional backup copies in a
+separate safe location.
 
-If startup fails, inspect %LOCALAPPDATA%\LastTrain\logs\startup.log and
-%LOCALAPPDATA%\LastTrain\data\server.log. If the browser does not open, use
-the local URL from server.json in the data folder (normally 127.0.0.1:8765).
-If a port is busy, another nearby loopback port is selected automatically.
-Closing the browser does not stop the server; use Stop Last Train.exe.
+The archive is built for Linux x86_64. PyInstaller bundles the Python runtime
+and application dependencies, but Linux system libraries such as glibc remain
+provided by the operating system. Build on a distribution compatible with the
+oldest Linux version you intend to support, and verify the archive on the
+target distribution.
+
+To create or restore a backup, or to check the profile, use:
+
+  ./LastTrain backup
+  ./LastTrain restore --file /path/to/backup.zip
+  ./LastTrain doctor
+
+Restore asks you to type RESTORE and makes a safety backup first. Do not replace
+the database while Last Train is running.
+
+Original project created by COUnT (count-rzy). Special thanks to Sonya (Ryuko)
+for her contributions and programming mentorship. This Linux fork is based on
+the original project: https://github.com/count-rzy/diamondtime-train

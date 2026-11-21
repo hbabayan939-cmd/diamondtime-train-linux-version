@@ -86,8 +86,8 @@ export const extra = {
   'atmosphere.twilight': ['Twilight', 'Сумерки'],
   'atmosphere.night': ['Night', 'Ночь'],
   'error.network': [
-    'The local server is unavailable. Run start.bat and retry.',
-    'Локальный сервер недоступен. Запустите start.bat и повторите попытку.',
+    'The local server is unavailable. Start Last Train and retry.',
+    'Локальный сервер недоступен. Запустите Last Train и повторите попытку.',
   ],
   'error.generic': [
     'The request could not be completed. Check the input and retry.',

@@ -32,7 +32,7 @@ export function Protected({ children }) {
     return (
       <div className="panel" role="alert">
         {t('ui.local_server_unavailable')} {error}
-        {t('ui.run_start_bat_then')}{' '}
+        {t('ui.start_last_train_then_retry')}{' '}
         <button onClick={() => window.location.reload()}>{t('ui.retry')}</button>
       </div>
     )

@@ -1,5 +1,7 @@
 # Last Train carriage art direction
 
+This is the art and asset guide for the Linux source fork. The asset files and artwork workflow are platform-independent; run project commands from a Linux terminal at the repository root.
+
 ## Scene specification
 
 - **Logical canvas:** 836 × 470 pixels, matching the 16:9 carriage illustration. Every displayed raster layer uses this coordinate system. The browser scales it with nearest-neighbor sampling and crops with `xMidYMid slice` on narrow screens.
@@ -43,7 +45,7 @@ Composition/framing: wide straight-on elevation, three window openings have stra
 Constraints: original art, no text, no logos, no watermark.
 ```
 
-Run `python front/scripts/build_pixel_art.py` from the repository root with Pillow installed to rebuild `front/public/art/`. The script cuts true alpha window openings, generates stage color variants, and draws deterministic transparent parallax, terrain, glass, four-frame rain, lighting, and firefly layers. Keep master assets in `source/`; edit them at native resolution before rebuilding. Do not apply a pixelation filter to vector stand-ins.
+Run `python3 front/scripts/build_pixel_art.py` from the repository root with Pillow installed to rebuild `front/public/art/`. The script cuts true alpha window openings, generates stage color variants, and draws deterministic transparent parallax, terrain, glass, four-frame rain, lighting, and firefly layers. Keep master assets in `source/`; edit them at native resolution before rebuilding. Do not apply a pixelation filter to vector stand-ins.
 
 The script also writes static [afternoon](previews/afternoon.png), [night](previews/night.png), and [rainy night](previews/rainy-night.png) composition previews for visual review. They omit moving sprites and HTML controls.
 

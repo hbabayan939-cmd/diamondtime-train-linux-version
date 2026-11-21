@@ -1,4 +1,4 @@
-# Install into the dedicated build virtual environment on Windows x64.
+# Pinned Python dependencies for the Linux x86_64 PyInstaller build.
 Django==6.0.10
 djangorestframework==3.18.3
 djangorestframework-simplejwt==5.5.1
