@@ -61,11 +61,14 @@ Make the helper executable and install the application:
 ```sh
 chmod +x lasttrain.sh
 ./lasttrain.sh install
+./lasttrain.sh desktop-install
 ```
 
 The installer creates `back/.venv`, installs the Python requirements, installs the frontend packages under `front/node_modules`, builds the frontend, and initializes the local database. It does not require administrator privileges for project dependencies. It may ask for system packages if your Linux installation lacks Python’s `venv` support.
 
 You can also run `./lasttrain.sh` with no argument; it performs the same install action. Re-running the install command builds the frontend again and preserves an existing profile.
+
+`desktop-install` adds a Last Train item to your desktop environment's applications menu and copies its icon into your user icon directory. It does not need administrator access. The shortcut points to the current project folder, so run `./lasttrain.sh desktop-install` again if you move the checkout. Remove the shortcut with `./lasttrain.sh desktop-remove`; this leaves your project and data in place.
 
 ## Start and stop the app
 

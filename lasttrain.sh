@@ -14,9 +14,55 @@ Usage:
   ./lasttrain.sh backup
   ./lasttrain.sh restore [--file backup.zip]
   ./lasttrain.sh doctor
+  ./lasttrain.sh desktop-install
+  ./lasttrain.sh desktop-remove
 
 With no command, install dependencies, build the app and initialize its profile.
 EOF
+}
+
+desktop_exec_quote() {
+  python3 -c 'import sys; s=sys.argv[1]; special=chr(92)+chr(34)+chr(96)+chr(36); print(chr(34)+"".join(chr(92)+c if c in special else c for c in s)+chr(34))' "$1"
+}
+
+desktop_install() {
+  local python="$ROOT/back/.venv/bin/python"
+  [[ -x "$python" ]] || { echo 'Run ./lasttrain.sh install before adding the application shortcut.' >&2; exit 1; }
+
+  local xdg_data="${XDG_DATA_HOME:-$HOME/.local/share}"
+  [[ "$xdg_data" == /* ]] || { echo 'XDG_DATA_HOME must be an absolute path.' >&2; exit 1; }
+  local applications="$xdg_data/applications"
+  local icons="$xdg_data/icons/hicolor/scalable/apps"
+  local desktop_file="$applications/lasttrain.desktop"
+  local icon_file="$icons/lasttrain.svg"
+  mkdir -p "$applications" "$icons"
+  install -m 0644 "$ROOT/assets/lasttrain.svg" "$icon_file"
+
+  local temp_file="$desktop_file.tmp.$$"
+  {
+    printf '[Desktop Entry]\n'
+    printf 'Version=1.0\n'
+    printf 'Type=Application\n'
+    printf 'Name=Last Train\n'
+    printf 'Comment=Focus, rest, and reflect along the railway\n'
+    printf 'Exec=%s start\n' "$(desktop_exec_quote "$ROOT/lasttrain.sh")"
+    printf 'Icon=%s\n' "$icon_file"
+    printf 'Terminal=false\n'
+    printf 'StartupNotify=true\n'
+    printf 'Categories=Office;Utility;\n'
+  } > "$temp_file"
+  chmod 0644 "$temp_file"
+  mv -f -- "$temp_file" "$desktop_file"
+  printf 'Application shortcut installed: %s\n' "$desktop_file"
+  printf 'You can now launch Last Train from your applications menu.\n'
+}
+
+desktop_remove() {
+  local xdg_data="${XDG_DATA_HOME:-$HOME/.local/share}"
+  [[ "$xdg_data" == /* ]] || { echo 'XDG_DATA_HOME must be an absolute path.' >&2; exit 1; }
+  rm -f -- "$xdg_data/applications/lasttrain.desktop" \
+    "$xdg_data/icons/hicolor/scalable/apps/lasttrain.svg"
+  printf 'Last Train application shortcut removed. Your profile and project files were kept.\n'
 }
 
 install_app() {
@@ -53,6 +99,8 @@ command_name="${1:-install}"
 if (($#)); then shift; fi
 case "$command_name" in
   install|setup) install_app ;;
+  desktop-install) desktop_install ;;
+  desktop-remove) desktop_remove ;;
   start|stop|backup|restore|doctor)
     python="$ROOT/back/.venv/bin/python"
     [[ -x "$python" ]] || { echo 'Run ./lasttrain.sh install first.' >&2; exit 1; }
