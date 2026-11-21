@@ -119,6 +119,8 @@ The interface uses React, JavaScript and Vite. The local API and server use Djan
 
 Last Train was created by **COUNT (count-rzy)**. This Linux fork builds on the original project and preserves its design, features and history.
 
+## From original README.md
+
 **Special thanks to Sonya (Ryuko)** for her contributions, guidance and programming mentorship, and for supporting the creator’s growth as a developer.
 
 See [project credits and lineage](docs/PROJECT-CREDITS.md) and the [original repository](https://github.com/count-rzy/diamondtime-train).
