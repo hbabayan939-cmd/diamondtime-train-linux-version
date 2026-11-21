@@ -6,6 +6,7 @@ This file records the Linux fork's platform direction alongside history inherite
 
 - Set the fork's target platform to Linux.
 - Added `lasttrain.sh` as the single Linux command entry point for installation, start, stop, backup, restore and diagnostics.
+- Added per-user applications-menu shortcut installation and removal, with a matching pixel-art icon.
 - Added an optional Linux x86_64 PyInstaller onedir build and ZIP packager.
 - Added Linux setup and usage documentation, and documented the original project lineage and contributor credits.
 - Added Linux process locking and launcher startup support while retaining the original application architecture.
